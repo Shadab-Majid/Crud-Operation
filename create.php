@@ -1,49 +1,30 @@
 <?php
 
-$servername="localhost";
-$username="root";
-$password="";
-$databasename="myshop";
-// CREATE A CONNECTION 
-$connection = new mysqli($servername, $username, $password, $databasename);
+include "config.php";
 
-$name = "";
-$email = "";
-$phone = "";
-$address = "";
-$errorMessage = "";
-$successMessage = "";
+// ... (Connection and variable initialization)
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_POST["name"];
     $email = $_POST["email"];
     $phone = $_POST["phone"];
     $address = $_POST["address"];
-    do {
-        if (empty($name) || empty($email) || empty($phone) || empty($address)) {
-            $errorMessage = "All the fields are require";
-            break;
+
+    if (empty($name) || empty($email) || empty($phone) || empty($address)) {
+        $errorMessage = "All the fields are required";
+    } else {
+        $stmt = $connection->prepare("INSERT INTO clients (name, email, phone, address) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $name, $email, $phone, $address);
+
+        if ($stmt->execute()) {
+            $successMessage = "Client added successfully";
+            $stmt->close();
+            header('Location: /crud_operation/index.php');
+            exit;
+        } else {
+            $errorMessage = "Error inserting client: " . $connection->error;
         }
-        //add new client into database
-        $sql = "INSERT INTO clients (name, email, phone, address) " . 
-               "VALUES('$name', '$email', '$phone', '$address')";
-        $result = $connection->query($sql);
-
-        if(!$result){
-            $errorMessage="Invalid query:".$connection->error;
-            break;
-
-        }
-        $name = "";
-        $email = "";
-        $phone = "";
-        $address = "";
-        $successMessage = "Client added succesfully";
-
-        header('location:/crud_operation/index.php');
-        exit;
-
-    } while (false);
+    }
 }
 ?>
 

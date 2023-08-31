@@ -1,18 +1,5 @@
 <?php
- $servername="localhost";
- $username="root";
- $password="";
- $databasename="myshop";
-// CREATE A CONNECTION 
- $connection = new mysqli($servername, $username, $password, $databasename);
-
-$id="";
-$name = "";
-$email = "";
-$phone = "";
-$address = "";
-$errorMessage = "";
-$successMessage = "";
+include "config.php";
 
 if($_SERVER['REQUEST_METHOD']=='GET'){
     //GET method : show the data of the client
